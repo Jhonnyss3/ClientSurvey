@@ -1,6 +1,14 @@
 from fastapi import APIRouter, UploadFile, File, Form, HTTPException
 from typing import List, Optional
 from .models import UsuarioBase
+from pdf2image import convert_from_path
+
+import pytesseract
+from PIL import Image
+import os
+from rapidfuzz import fuzz
+from unidecode import unidecode
+import re
 
 router = APIRouter()
 
@@ -44,6 +52,98 @@ def validar_documento(documento: UploadFile):
         raise HTTPException(status_code=400, detail="Documento deve ser PDF, JPG, JPEG ou PNG.")
     return documento
 
+# --- Funções utilitárias para busca robusta ---
+def normalizar(texto):
+    """Remove acentos, deixa minúsculo e tira espaços extras."""
+    return unidecode(texto).lower().strip()
+
+def campo_esta_presente(valor, texto, limiar=85):
+    """Busca aproximada para nomes, nacionalidade, estado civil."""
+    valor_norm = normalizar(valor)
+    texto_norm = normalizar(texto)
+    return fuzz.partial_ratio(valor_norm, texto_norm) >= limiar
+
+def buscar_regex(padrao, texto):
+    """Busca regex no texto normalizado."""
+    texto_norm = normalizar(texto)
+    return re.search(padrao, texto_norm) is not None
+
+# --- Função de validação IA aprimorada ---
+def validar_documento_ia(documento, dados_usuario):
+    import tempfile
+    import shutil
+
+    # Salva o arquivo temporariamente
+    suffix = os.path.splitext(documento.filename)[-1].lower()
+    with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
+        tmp.write(documento.file.read())
+        temp_path = tmp.name
+
+    texto = ""
+    try:
+        if suffix == ".pdf":
+            # Caminho do poppler (ajuste para o seu PC)
+            poppler_path = r"C:\poppler-24.08.0\Library\bin"  # <-- Troque para o caminho correto!
+            # Converte todas as páginas do PDF em imagens
+            images = convert_from_path(temp_path, poppler_path=poppler_path)
+            for img in images:
+                texto += pytesseract.image_to_string(img, lang="por") + "\n"
+        else:
+            img = Image.open(temp_path)
+            texto = pytesseract.image_to_string(img, lang="por")
+    except Exception as e:
+        os.remove(temp_path)
+        raise HTTPException(status_code=400, detail=f"O arquivo enviado não pôde ser processado como imagem ou PDF. Erro: {e}")
+    os.remove(temp_path)
+    print("\n--- TEXTO EXTRAÍDO DO DOCUMENTO ---\n", texto, "\n-------------------\n")
+
+    # ... (restante da validação robusta dos campos, igual antes) ...
+    erros = []
+
+    # Nome, nacionalidade, estado civil, nome pai, nome mae: fuzzy
+    for campo in ["nome", "nacionalidade", "estado civil", "nome pai", "nome mae"]:
+        valor = dados_usuario.get(campo)
+        if valor and not campo_esta_presente(valor, texto):
+            erros.append(f"{campo} não confere com o documento.")
+
+    # CPF: regex para 11 dígitos juntos ou com pontuação
+    cpf = dados_usuario.get("cpf")
+    if cpf:
+        cpf_regex = re.sub(r'\D', '', cpf)  # só números
+        padrao_cpf = r'(\d{3}\.?\d{3}\.?\d{3}-?\d{2})'
+        if not buscar_regex(cpf_regex, texto) and not buscar_regex(padrao_cpf, texto):
+            erros.append("CPF não confere com o documento.")
+
+    # Data de nascimento: aceita formatos 1997-08-28, 28/08/1997, 28-08-1997
+    nascimento = dados_usuario.get("nascimento")
+    if nascimento:
+        datas_possiveis = [
+            nascimento,
+            nascimento.replace("-", "/"),
+            nascimento.replace("/", "-"),
+        ]
+        data_regexes = [
+            r'\d{2}/\d{2}/\d{4}',
+            r'\d{2}-\d{2}-\d{4}',
+            r'\d{4}-\d{2}-\d{2}',
+        ]
+        encontrou = False
+        for data in datas_possiveis:
+            if campo_esta_presente(data, texto, limiar=90):
+                encontrou = True
+                break
+        if not encontrou:
+            for regex in data_regexes:
+                if buscar_regex(regex, texto):
+                    encontrou = True
+                    break
+        if not encontrou:
+            erros.append("Data de nascimento não confere com o documento.")
+
+    if erros:
+        raise HTTPException(status_code=400, detail="; ".join(erros))
+    return True
+
 @router.post("/usuario")
 async def criar_usuario(
     nome: str = Form(...),
@@ -54,7 +154,7 @@ async def criar_usuario(
     nome_pai: str = Form(...),
     nome_mae: str = Form(...),
     endereco: str = Form(...),
-    telefone: str = Form(...),  # <-- Novo campo telefone
+    telefone: str = Form(...),
     documento: UploadFile = File(...),
     interesses: str = Form(...),  # Recebe como string separada por vírgula
     compras_eventos: str = Form(...),
@@ -72,6 +172,18 @@ async def criar_usuario(
     redes_sociais = redes_sociais or []
     perfis_esports = perfis_esports or []
 
+    # --- IA: Validação do documento ---
+    dados_usuario = {
+        "nome": nome,
+        "cpf": cpf_validado,
+        "nascimento": nascimento,
+        "nacionalidade": nacionalidade,
+        "estado civil": estado_civil,
+        "nome pai": nome_pai,
+        "nome mae": nome_mae
+    }
+    validar_documento_ia(documento, dados_usuario)
+
     usuario = UsuarioBase(
         nome=nome,
         cpf=cpf_validado,
@@ -81,14 +193,12 @@ async def criar_usuario(
         nome_pai=nome_pai,
         nome_mae=nome_mae,
         endereco=endereco,
-        telefone=telefone_validado,  # <-- Novo campo telefone
+        telefone=telefone_validado,
         interesses=interesses_list,
         compras_eventos=compras_eventos,
         redes_sociais=redes_sociais,
         perfis_esports=perfis_esports
     )
-
-    # Aqui você pode salvar o arquivo documento.file.read() se quiser
 
     return {
         "mensagem": "Usuário recebido!",
