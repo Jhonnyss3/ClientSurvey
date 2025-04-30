@@ -4,8 +4,8 @@ from sqlalchemy.orm import Session
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from datetime import datetime, timedelta
-from app.models import Admin, User  # Ajuste conforme seu projeto
-from app.database import get_db     # Ajuste conforme seu projeto
+from app.models import Admin, User, AdminBase, UsuarioOut
+from app.database import get_db
 
 router = APIRouter()
 
@@ -77,7 +77,26 @@ def login_admin(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = 
     return {"access_token": access_token, "token_type": "bearer"}
 
 # Protected route: list all users
-@router.get("/admin/users")
+@router.get("/admin/users", response_model=list[UsuarioOut])
 def list_users(db: Session = Depends(get_db), current_admin: Admin = Depends(get_current_admin)):
     users = db.query(User).all()
-    return users
+    # Convertendo os campos de string para lista para o response_model
+    result = []
+    for user in users:
+        result.append(UsuarioOut(
+            nome=user.nome,
+            cpf=user.cpf,
+            nascimento=user.nascimento,
+            nacionalidade=user.nacionalidade,
+            estado_civil=user.estado_civil,
+            nome_pai=user.nome_pai,
+            nome_mae=user.nome_mae,
+            endereco=user.endereco,
+            telefone=user.telefone,
+            interesses=[i.strip() for i in user.interesses.split(",")] if user.interesses else [],
+            compras_eventos=user.compras_eventos,
+            redes_sociais=[i.strip() for i in user.redes_sociais.split(",")] if user.redes_sociais else [],
+            perfis_esports=[i.strip() for i in user.perfis_esports.split(",")] if user.perfis_esports else [],
+            created_at=user.created_at
+        ))
+    return result

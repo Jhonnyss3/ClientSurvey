@@ -1,13 +1,11 @@
 from pydantic import BaseModel, Field
-from typing import List, Optional
+from typing import List
 from datetime import date, datetime
 
 from sqlalchemy import Column, Integer, String, Date, Text, DateTime
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import declarative_base
 
 Base = declarative_base()
-
-# --- SQLAlchemy Models (para o banco de dados) ---
 
 class User(Base):
     __tablename__ = "user"
@@ -21,19 +19,17 @@ class User(Base):
     nome_mae = Column(String, nullable=False)
     endereco = Column(String, nullable=False)
     telefone = Column(String, nullable=False)
-    interesses = Column(Text, nullable=False)  # Armazena como string separada por vírgula
+    interesses = Column(Text, nullable=False)
     compras_eventos = Column(String, nullable=False)
-    redes_sociais = Column(Text, nullable=True)  # Armazena como string separada por vírgula
-    perfis_esports = Column(Text, nullable=True)  # Armazena como string separada por vírgula
-    created_at = Column(DateTime, default=datetime.utcnow)  # <-- Novo campo
+    redes_sociais = Column(Text, nullable=True)
+    perfis_esports = Column(Text, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
 
 class Admin(Base):
     __tablename__ = "admin"
     id = Column(Integer, primary_key=True, index=True)
     login = Column(String, unique=True, index=True, nullable=False)
     pw_hash = Column(String, nullable=False)
-
-# --- Pydantic Models (para validação e resposta da API) ---
 
 class UsuarioBase(BaseModel):
     nome: str
