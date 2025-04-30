@@ -1,6 +1,6 @@
 from fastapi import APIRouter, UploadFile, File, Form, HTTPException
 from typing import List, Optional
-from .models import UsuarioBase
+from .models import UsuarioOut
 from pdf2image import convert_from_path
 
 import pytesseract
@@ -9,12 +9,12 @@ import os
 from rapidfuzz import fuzz
 from unidecode import unidecode
 import re
+from datetime import datetime
 
 router = APIRouter()
 
 # Função para tratar e validar a data de nascimento
 def parse_date(data_str):
-    from datetime import datetime
     for fmt in ("%Y-%m-%d", "%d/%m/%Y", "%d-%m-%Y"):
         try:
             return datetime.strptime(data_str, fmt).date()
@@ -44,7 +44,7 @@ def parse_lista(campo: str):
 def validar_documento(documento: UploadFile):
     if not documento:
         raise HTTPException(status_code=400, detail="Documento não enviado.")
-    # Exemplo: aceitar apenas PDF ou JPG/JPEG/PNG
+    # Aceitar apenas PDF ou JPG/JPEG/PNG
     if not (documento.filename.lower().endswith('.pdf') or
             documento.filename.lower().endswith('.jpg') or
             documento.filename.lower().endswith('.jpeg') or
@@ -71,7 +71,6 @@ def buscar_regex(padrao, texto):
 # --- Função de validação IA aprimorada ---
 def validar_documento_ia(documento, dados_usuario):
     import tempfile
-    import shutil
 
     # Salva o arquivo temporariamente
     suffix = os.path.splitext(documento.filename)[-1].lower()
@@ -84,7 +83,6 @@ def validar_documento_ia(documento, dados_usuario):
         if suffix == ".pdf":
             # Caminho do poppler (ajuste para o seu PC)
             poppler_path = r"C:\poppler-24.08.0\Library\bin"  # <-- Troque para o caminho correto!
-            # Converte todas as páginas do PDF em imagens
             images = convert_from_path(temp_path, poppler_path=poppler_path)
             for img in images:
                 texto += pytesseract.image_to_string(img, lang="por") + "\n"
@@ -97,7 +95,6 @@ def validar_documento_ia(documento, dados_usuario):
     os.remove(temp_path)
     print("\n--- TEXTO EXTRAÍDO DO DOCUMENTO ---\n", texto, "\n-------------------\n")
 
-    # ... (restante da validação robusta dos campos, igual antes) ...
     erros = []
 
     # Nome, nacionalidade, estado civil, nome pai, nome mae: fuzzy
@@ -144,7 +141,7 @@ def validar_documento_ia(documento, dados_usuario):
         raise HTTPException(status_code=400, detail="; ".join(erros))
     return True
 
-@router.post("/usuario")
+@router.post("/usuario", response_model=UsuarioOut)
 async def criar_usuario(
     nome: str = Form(...),
     cpf: str = Form(...),
@@ -161,18 +158,15 @@ async def criar_usuario(
     redes_sociais: Optional[List[str]] = Form(None),
     perfis_esports: Optional[List[str]] = Form(None)
 ):
-    # Valida e trata os campos
     nascimento_date = parse_date(nascimento)
     cpf_validado = validar_cpf(cpf)
     telefone_validado = validar_telefone(telefone)
     interesses_list = parse_lista(interesses)
     documento = validar_documento(documento)
 
-    # Garante listas vazias se não vierem
     redes_sociais = redes_sociais or []
     perfis_esports = perfis_esports or []
 
-    # --- IA: Validação do documento ---
     dados_usuario = {
         "nome": nome,
         "cpf": cpf_validado,
@@ -184,7 +178,7 @@ async def criar_usuario(
     }
     validar_documento_ia(documento, dados_usuario)
 
-    usuario = UsuarioBase(
+    usuario = UsuarioOut(
         nome=nome,
         cpf=cpf_validado,
         nascimento=nascimento_date,
@@ -197,11 +191,8 @@ async def criar_usuario(
         interesses=interesses_list,
         compras_eventos=compras_eventos,
         redes_sociais=redes_sociais,
-        perfis_esports=perfis_esports
+        perfis_esports=perfis_esports,
+        created_at=datetime.utcnow()
     )
 
-    return {
-        "mensagem": "Usuário recebido!",
-        "usuario": usuario,
-        "documento_nome": documento.filename
-    }
+    return usuario

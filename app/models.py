@@ -1,8 +1,8 @@
 from pydantic import BaseModel, Field
 from typing import List, Optional
-from datetime import date
+from datetime import date, datetime
 
-from sqlalchemy import Column, Integer, String, Date, Text
+from sqlalchemy import Column, Integer, String, Date, Text, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
@@ -25,6 +25,7 @@ class User(Base):
     compras_eventos = Column(String, nullable=False)
     redes_sociais = Column(Text, nullable=True)  # Armazena como string separada por vírgula
     perfis_esports = Column(Text, nullable=True)  # Armazena como string separada por vírgula
+    created_at = Column(DateTime, default=datetime.utcnow)  # <-- Novo campo
 
 class Admin(Base):
     __tablename__ = "admin"
@@ -48,6 +49,12 @@ class UsuarioBase(BaseModel):
     compras_eventos: str
     redes_sociais: List[str] = []
     perfis_esports: List[str] = []
+
+    class Config:
+        orm_mode = True
+
+class UsuarioOut(UsuarioBase):
+    created_at: datetime
 
     class Config:
         orm_mode = True
