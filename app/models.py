@@ -2,6 +2,38 @@ from pydantic import BaseModel, Field
 from typing import List, Optional
 from datetime import date
 
+from sqlalchemy import Column, Integer, String, Date, Text
+from sqlalchemy.ext.declarative import declarative_base
+
+Base = declarative_base()
+
+# --- SQLAlchemy Models (para o banco de dados) ---
+
+class User(Base):
+    __tablename__ = "user"
+    id = Column(Integer, primary_key=True, index=True)
+    nome = Column(String, nullable=False)
+    cpf = Column(String, nullable=False, unique=True)
+    nascimento = Column(Date, nullable=False)
+    nacionalidade = Column(String, nullable=False)
+    estado_civil = Column(String, nullable=False)
+    nome_pai = Column(String, nullable=False)
+    nome_mae = Column(String, nullable=False)
+    endereco = Column(String, nullable=False)
+    telefone = Column(String, nullable=False)
+    interesses = Column(Text, nullable=False)  # Armazena como string separada por vírgula
+    compras_eventos = Column(String, nullable=False)
+    redes_sociais = Column(Text, nullable=True)  # Armazena como string separada por vírgula
+    perfis_esports = Column(Text, nullable=True)  # Armazena como string separada por vírgula
+
+class Admin(Base):
+    __tablename__ = "admin"
+    id = Column(Integer, primary_key=True, index=True)
+    login = Column(String, unique=True, index=True, nullable=False)
+    pw_hash = Column(String, nullable=False)
+
+# --- Pydantic Models (para validação e resposta da API) ---
+
 class UsuarioBase(BaseModel):
     nome: str
     cpf: str
@@ -11,7 +43,18 @@ class UsuarioBase(BaseModel):
     nome_pai: str
     nome_mae: str
     endereco: str
+    telefone: str
     interesses: List[str] = Field(..., example=["futebol", "jogos", "música"])
     compras_eventos: str
     redes_sociais: List[str] = []
     perfis_esports: List[str] = []
+
+    class Config:
+        orm_mode = True
+
+class AdminBase(BaseModel):
+    id: int
+    login: str
+
+    class Config:
+        orm_mode = True

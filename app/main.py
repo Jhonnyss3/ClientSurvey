@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from .routes import router
+from .routes_usuario import router
 
 app = FastAPI(
     title="Know Your Fan API",
