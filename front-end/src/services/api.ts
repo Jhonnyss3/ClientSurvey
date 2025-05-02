@@ -1,8 +1,8 @@
-// frontend/src/services/api.ts
-import axios from 'axios';
+// src/services/api.ts
+import axios from "axios";
 
 const api = axios.create({
-  baseURL: 'http://localhost:8000/docs', // ajuste para o endereço da sua API
+  baseURL: "http://localhost:8000", // ajuste se necessário
 });
 
 export default api;

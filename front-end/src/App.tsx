@@ -83,17 +83,30 @@ function App() {
     setLoginMsg(null);
 
     try {
-      const res = await api.post("/admin/login", new URLSearchParams({
-        username: login,
-        password: password,
-      }), {
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      });
-      setToken(res.data.access_token);
+      const params = new URLSearchParams();
+      params.append("username", login);
+      params.append("password", password);
+      
+      const res = await fetch("http://localhost:8000/admin/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: params.toString(),
+      });       
+      
+      if (!res.ok) {
+        const data = await res.json();
+        setLoginMsg(data.detail || "Erro no login.");
+        return;
+      }
+  
+      const data = await res.json();
+      setToken(data.access_token);
       setLoginMsg("Login realizado!");
       setPage("admin");
     } catch (err: any) {
-      setLoginMsg(err?.response?.data?.detail || "Erro no login.");
+      setLoginMsg("Erro no login.");
     }
   };
 
@@ -154,7 +167,7 @@ function App() {
       {page === "login" && (
         <form onSubmit={handleLoginSubmit}>
           <h2>Login Admin</h2>
-          <input name="login" placeholder="Login" value={login} onChange={e => setLogin(e.target.value)} required /><br />
+          <input name="username" placeholder="Login" value={login} onChange={e => setLogin(e.target.value)} required /><br />
           <input name="password" type="password" placeholder="Senha" value={password} onChange={e => setPassword(e.target.value)} required /><br />
           <button type="submit">Entrar</button>
           {loginMsg && <p>{loginMsg}</p>}
