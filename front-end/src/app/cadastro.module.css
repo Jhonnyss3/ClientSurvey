@@ -1,104 +1,186 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
 .wrapper {
-    min-height: 100vh;
-    background: linear-gradient(135deg, #cca500 40%, #232323 20%);
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .header {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    padding: 24px 32px 0 0;
-  }
-  
-  .loginLink {
-    color: #232323;
-    background: #cca500;
-    padding: 8px 18px;
-    border-radius: 6px;
-    font-weight: 700;
-    text-decoration: none;
-    transition: background 0.2s, color 0.2s;
-  }
-  
-  .loginLink:hover {
-    background: #232323;
-    color: #cca500;
-  }
-  
+  min-height: 100vh;
+  background: linear-gradient(135deg, #cca500 40%, #232323 20%);
+  display: flex;
+  flex-direction: column;
+  font-family: 'Inter', Arial, sans-serif;
+  color: #023047;
+}
+
+.header {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 24px 32px 0 0;
+}
+
+.loginLink {
+  color: #232323;
+  background: #cca500;
+  padding: 8px 18px;
+  border-radius: 6px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s;
+}
+
+.loginLink:hover {
+  background: #232323;
+  color: #cca500;
+}
+
+.formContainer {
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 36px 56px 36px 56px;
+  box-shadow: 10px 10px 40px rgba(0, 0, 0, 0.4);
+  gap: 10px;
+  max-width: 900px;
+  width: 100%;
+  margin: 32px auto 0 auto;
+  color: #023047;
+  font-family: 'Inter', Arial, sans-serif;
+  min-height: 0;
+}
+
+.tituloFase {
+  color: #023047;
+  font-size: 2.1rem;
+  font-weight: 500;
+  text-align: center;
+  margin-bottom: 18px;
+  letter-spacing: 0.01em;
+  text-shadow: 0 2px 8px rgba(204, 165, 0, 0.10);
+  font-family: 'Inter', Arial, sans-serif;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.inputRow {
+  display: flex;
+  gap: 18px;
+  width: 100%;
+}
+
+.inputCol {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #023047;
+  margin-bottom: 2px;
+  letter-spacing: 0.01em;
+  font-family: 'Inter', Arial, sans-serif;
+}
+
+.input,
+select.input,
+textarea.input,
+input[type="file"].input {
+  padding: 15px;
+  font-size: 15px;
+  border: 1px solid #ccc;
+  margin-bottom: 10px;
+  margin-top: 2px;
+  border-radius: 4px;
+  transition: all linear 160ms;
+  outline: none;
+  color: #023047;
+  background: #fff;
+  font-family: 'Inter', Arial, sans-serif;
+  box-shadow: none;
+  width: 100%;
+  resize: none;
+  min-width: 0;
+}
+
+.input:focus,
+select.input:focus,
+textarea.input:focus {
+  border: 1px solid #cca500;
+}
+
+select.input {
+  appearance: none;
+  -webkit-appearance: none;
+  background: #fff url("data:image/svg+xml,%3Csvg width='16' height='16' fill='black' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M4 6l4 4 4-4' stroke='%23023047' stroke-width='2' fill='none'/%3E%3C/svg%3E") no-repeat right 12px center/18px 18px;
+}
+
+.buttonRow {
+  display: flex;
+  justify-content: flex-end;
+  gap: 18px;
+  margin-top: 10px;
+}
+
+.button {
+  background-color: #cca500;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  border: none !important;
+  border-radius: 8px;
+  padding: 13px 32px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px 0 rgba(204, 165, 0, 0.13);
+  transition: all linear 160ms;
+  position: relative;
+  z-index: 1;
+  margin: 0 !important;
+  font-family: 'Inter', Arial, sans-serif;
+}
+
+.button:hover {
+  transform: scale(1.05);
+  background-color: #cca500;
+  color: #fff;
+  box-shadow: 0 4px 16px 0 rgba(204, 165, 0, 0.22);
+}
+
+.statusMsg {
+  text-align: center;
+  margin-top: 10px;
+  font-weight: 500;
+  color: #cca500;
+  background: rgba(255, 255, 204, 0.5);
+  border-radius: 6px;
+  padding: 8px 0;
+  font-family: 'Inter', Arial, sans-serif;
+}
+
+@media (max-width: 1100px) {
   .formContainer {
-    background: #fff;
-    color: #232323;
-    max-width: 480px;
-    margin: 40px auto;
-    border-radius: 12px;
-    box-shadow: 0 2px 16px rgba(35,35,35,0.10);
-    padding: 32px 28px;
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
+    max-width: 98vw;
+    padding: 24px 4vw 24px 4vw;
   }
-  
+  .inputRow {
+    flex-direction: column;
+    gap: 0;
+  }
+}
+
+@media (max-width: 600px) {
+  .formContainer {
+    padding: 12px 2vw;
+    border-radius: 14px;
+    min-width: unset;
+  }
+  .header {
+    padding: 16px 8px 0 0;
+  }
   .tituloFase {
-    color: #cca500;
-    text-align: center;
-    margin-bottom: 18px;
+    font-size: 1.3rem;
   }
-  
-  .inputGroup {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  
-  .label {
-    font-weight: 500;
-    margin-bottom: 2px;
-  }
-  
-  .input {
-    padding: 8px;
-    border: 1px solid #cca500;
-    border-radius: 4px;
-    font-size: 1rem;
-  }
-  
-  .buttonRow {
-    display: flex;
-    justify-content: flex-end;
-    gap: 12px;
-    margin-top: 18px;
-  }
-  
-  .button {
-    background: #cca500;
-    color: #232323;
-    border: none;
-    border-radius: 4px;
-    padding: 10px 22px;
-    font-weight: 700;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background 0.2s, color 0.2s;
-  }
-  
-  .button:hover {
-    background: #232323;
-    color: #cca500;
-  }
-  
-  .statusMsg {
-    text-align: center;
-    margin-top: 10px;
-    font-weight: 500;
-  }
-  
-  @media (max-width: 600px) {
-    .formContainer {
-      padding: 16px 4px;
-    }
-    .header {
-      padding: 16px 8px 0 0;
-    }
-  }
+}

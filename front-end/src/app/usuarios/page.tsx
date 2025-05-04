@@ -6,9 +6,9 @@ import api from "../../services/api";
 type User = {
   id: number;
   nome: string;
-  data_resposta: string;
+  created_at: string;
   cpf: string;
-  data_nascimento: string;
+  nascimento: string;
   nacionalidade: string;
   estado_civil: string;
   nome_pai: string;
@@ -72,7 +72,10 @@ export default function UsuariosPage() {
             <div className={styles["user-header"]}>
               <span className={styles["user-name"]}>{user.nome}</span>
               <span className={styles["user-date"]}>
-                Respondido em: {user.data_resposta}
+                Respondido em:{" "}
+                {user.created_at
+                  ? new Date(user.created_at).toLocaleString("pt-BR")
+                  : "Não informado"}
               </span>
             </div>
             {expanded === idx && (
@@ -81,7 +84,7 @@ export default function UsuariosPage() {
                   <strong>CPF:</strong> {user.cpf}
                 </div>
                 <div>
-                  <strong>Data de Nascimento:</strong> {user.data_nascimento}
+                  <strong>Data de Nascimento:</strong> {user.nascimento}
                 </div>
                 <div>
                   <strong>Nacionalidade:</strong> {user.nacionalidade}
