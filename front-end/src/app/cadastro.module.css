@@ -125,6 +125,7 @@ select.input {
   margin-top: 10px;
 }
 
+/* Botão com shadow mais destacado */
 .button {
   background-color: #cca500;
   color: #fff;
@@ -134,8 +135,12 @@ select.input {
   border-radius: 8px;
   padding: 13px 32px;
   cursor: pointer;
-  box-shadow: 0 2px 8px 0 rgba(204, 165, 0, 0.13);
-  transition: all linear 160ms;
+  /* Sombra mais profunda e realista */
+  box-shadow:
+    0 4px 16px 0 rgba(204, 165, 0, 0.22),
+    0 8px 32px 0 rgba(35, 35, 35, 0.18),
+    0 1.5px 4px 0 rgba(0,0,0,0.10);
+  transition: all linear 160ms, box-shadow 0.2s;
   position: relative;
   z-index: 1;
   margin: 0 !important;
@@ -143,10 +148,13 @@ select.input {
 }
 
 .button:hover {
-  transform: scale(1.05);
+  transform: scale(1.05) translateY(-2px);
   background-color: #cca500;
   color: #fff;
-  box-shadow: 0 4px 16px 0 rgba(204, 165, 0, 0.22);
+  box-shadow:
+    0 8px 32px 0 rgba(204, 165, 0, 0.28),
+    0 12px 48px 0 rgba(35, 35, 35, 0.22),
+    0 2px 8px 0 rgba(0,0,0,0.13);
 }
 
 .statusMsg {
@@ -158,6 +166,99 @@ select.input {
   border-radius: 6px;
   padding: 8px 0;
   font-family: 'Inter', Arial, sans-serif;
+}
+
+.redeSocialRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.addRemoveBtn {
+  background: #cca500;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 2px;
+  transition: background 0.2s;
+  padding: 0;
+}
+
+.addRemoveBtn:hover {
+  background: #232323;
+  color: #cca500;
+}
+
+.nacionalidadeLabel {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.tooltipIcon {
+  background: #cca500;
+  color: #fff;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: bold;
+  margin-left: 2px;
+  transition: background 0.2s;
+  border: none;
+  outline: none;
+  box-shadow: 0 1px 4px rgba(35,35,35,0.10);
+}
+
+.tooltipIcon:hover,
+.tooltipIcon:focus {
+  background: #232323;
+  color: #cca500;
+}
+
+.tooltipText {
+  visibility: hidden;
+  width: 260px;
+  background-color: #232323;
+  color: #fff;
+  text-align: left;
+  border-radius: 6px;
+  padding: 10px 14px;
+  position: absolute;
+  z-index: 10;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 0.2s;
+  font-size: 0.95rem;
+  box-shadow: 0 2px 12px rgba(35,35,35,0.18);
+  pointer-events: none;
+}
+
+.tooltip:hover .tooltipText,
+.tooltip:focus-within .tooltipText {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
 }
 
 @media (max-width: 1100px) {
