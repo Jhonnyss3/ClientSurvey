@@ -1,0 +1,104 @@
+.wrapper {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #cca500 40%, #232323 20%);
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .header {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 24px 32px 0 0;
+  }
+  
+  .loginLink {
+    color: #232323;
+    background: #cca500;
+    padding: 8px 18px;
+    border-radius: 6px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background 0.2s, color 0.2s;
+  }
+  
+  .loginLink:hover {
+    background: #232323;
+    color: #cca500;
+  }
+  
+  .formContainer {
+    background: #fff;
+    color: #232323;
+    max-width: 480px;
+    margin: 40px auto;
+    border-radius: 12px;
+    box-shadow: 0 2px 16px rgba(35,35,35,0.10);
+    padding: 32px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  
+  .tituloFase {
+    color: #cca500;
+    text-align: center;
+    margin-bottom: 18px;
+  }
+  
+  .inputGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .label {
+    font-weight: 500;
+    margin-bottom: 2px;
+  }
+  
+  .input {
+    padding: 8px;
+    border: 1px solid #cca500;
+    border-radius: 4px;
+    font-size: 1rem;
+  }
+  
+  .buttonRow {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 18px;
+  }
+  
+  .button {
+    background: #cca500;
+    color: #232323;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 22px;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+  }
+  
+  .button:hover {
+    background: #232323;
+    color: #cca500;
+  }
+  
+  .statusMsg {
+    text-align: center;
+    margin-top: 10px;
+    font-weight: 500;
+  }
+  
+  @media (max-width: 600px) {
+    .formContainer {
+      padding: 16px 4px;
+    }
+    .header {
+      padding: 16px 8px 0 0;
+    }
+  }

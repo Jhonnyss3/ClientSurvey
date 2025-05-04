@@ -1,0 +1,94 @@
+.container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 24px;
+    
+  }
+  
+  .titulo {
+    color: #fff;
+    text-align: center;
+    margin-bottom: 32px;
+    font-size: 2.2rem;
+    font-weight: 700;
+  }
+  
+  .user-list {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  
+  .user-card {
+    background: #fff;
+    color: #232323;
+    border-left: 8px solid #cca500;
+    border-radius: 8px;
+    box-shadow: 0 2px 12px rgba(35,35,35,0.10);
+    padding: 18px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: box-shadow 0.2s, border-color 0.2s;
+  }
+  
+  .expanded {
+    box-shadow: 0 4px 24px rgba(204,165,0,0.18);
+    border-left: 12px solid #cca500;
+  }
+  
+  .user-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0;
+    border-bottom: 1px solid #cca500;
+    padding-bottom: 8px;
+    user-select: none;
+  }
+  
+  .user-name {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #cca500;
+  }
+  
+  .user-date {
+    font-size: 0.95rem;
+    color: #232323;
+    opacity: 0.7;
+  }
+  
+  .user-info {
+    margin-top: 12px;
+  }
+  
+  .user-info div {
+    margin-bottom: 6px;
+    font-size: 1rem;
+  }
+  
+  .user-info a {
+    color: #cca500;
+    text-decoration: underline;
+    transition: color 0.2s, background 0.2s;
+  }
+  
+  .user-info a:hover {
+    color: #232323;
+    background: #cca500;
+    border-radius: 3px;
+    padding: 0 2px;
+  }
+  
+  @media (max-width: 600px) {
+    .container {
+      padding: 8px;
+    }
+    .user-card {
+      padding: 10px 4px;
+    }
+    .titulo {
+      font-size: 1.3rem;
+    }
+  }
