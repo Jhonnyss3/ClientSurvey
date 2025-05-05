@@ -13,6 +13,33 @@ Essas instruções permitirão que você obtenha uma cópia do projeto em opera�
 3. npm (geralmente já incluso no Node.js)
 4. (Opcional) Poetry ou pipenv para gerenciamento de dependências Python
 
+🗄️ Banco de Dados (PostgreSQL)
+
+1. Instale o PostgreSQL
+Download para Windows, Mac e Linux:
+
+https://www.postgresql.org/download/
+
+2. Crie um banco de dados para o projeto (nome fan_db)
+Após instalar, acesse o terminal do PostgreSQL (psql) e execute:
+
+CREATE DATABASE fan_db;
+CREATE USER chatsurvey_user WITH PASSWORD 'sua_senha_segura';
+GRANT ALL PRIVILEGES ON DATABASE fan_db TO chatsurvey_user;
+
+3. Crie a tabela admin
+No terminal do PostgreSQL, conecte-se ao banco e execute:
+
+CREATE TABLE IF NOT EXISTS admin (
+  id SERIAL PRIMARY KEY,
+  username VARCHAR(255) UNIQUE NOT NULL,
+  password VARCHAR(255) NOT NULL
+);
+
+4. Crie o admin padrão:
+
+INSERT INTO admin (username, password) VALUES ('teste', '1234');
+
 ### 🔧 Instalação
 
 1. Clone o repositório:
